@@ -83,6 +83,19 @@ struct LEVEL_UP_RESPONSE : PACKET_HEADER {
 
 //  ---------------------------- INVENTORY  ----------------------------
 
+struct Equipment {
+
+};
+
+struct Consumable {
+
+};
+
+struct Material {
+
+};
+
+
 struct ADD_ITEM_REQUEST : PACKET_HEADER {
 	uint8_t itemType; // (Max 3)
 	uint8_t itemSlotPos; // (Max 50)

@@ -5,78 +5,19 @@
 #define SERVER_TCP_PORT 8080
 #define PACKET_SIZE 1024
 
+#include "Packet.h"
+#include "User.h"
+
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <mswsock.h>
-#include <unordered_map>
 #include <thread>
 #include <iostream>
-#include <sstream>
 #include <string>
 #include <vector>
-#include <mutex>
-#include <deque>
-#include "Packet.h"
-
-struct Equipment {
-
-};
-
-struct Consumable {
-
-};
-
-struct Material {
-
-};
-
-void End() {
-    WSACleanup();
-}
 
 int main() {
 
-    WSADATA wsaData;
-    WSAStartup(MAKEWORD(2, 2), &wsaData);
-
-    SOCKET userSkt = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED);
-    HANDLE iocp = CreateIoCompletionPort((HANDLE)userSkt, NULL, (ULONG_PTR)userSkt, 0);
-
-    int level;
-    int exp;
-    std::string uuId;
-    std::string userId = "quokka";
-
-    std::vector<Equipment> equipment(30);
-    std::vector<Consumable> consumable(30);
-    std::vector<Material> material(30);
-
-    SOCKADDR_IN addr;
-    ZeroMemory(&addr, sizeof(addr));
-    addr.sin_family = AF_INET;
-    addr.sin_port = htons(SERVER_TCP_PORT);
-    inet_pton(AF_INET,SERVER_IP,&addr.sin_addr.s_addr);
-
-        if (!connect(userSkt, (SOCKADDR*)&addr, sizeof(addr))) {
-            char recvBuffer[PACKET_SIZE];
-            memset(recvBuffer, 0, PACKET_SIZE);
-
-            USER_CONNECT_REQUEST_PACKET ucReq;
-            ucReq.PacketId = (UINT16)PACKET_ID::USER_CONNECT_REQUEST;
-            ucReq.PacketLength = sizeof(USER_CONNECT_REQUEST_PACKET);
-            ucReq.userId = userId;
-            ucReq.uuId = "";
-
-            send(userSkt, (char*)&ucReq, sizeof(ucReq),0);
-            recv(userSkt, recvBuffer, PACKET_SIZE, 0);
-
-            // GET USER UUID
-            auto ucReqPacket = reinterpret_cast<USER_CONNECT_RESPONSE_PACKET*>(recvBuffer);
-
-            level = ucReqPacket->level;
-            exp = ucReqPacket->currentExp;
-            uuId = ucReqPacket->uuId;
-        }
 
         bool outCheck = false;
         outCheck = true;
@@ -86,10 +27,10 @@ int main() {
         uint8_t select;
 
         std::cout << "========================" << std::endl;
-        std::cout <<"아이디: " << userId << "레벨: " << level <<"경험치: " << exp << std::endl;
-        std::cout << "===    1. 인벤토리   ===" << std::endl;
-        std::cout << "===   2. 레이드 매칭 ===" << std::endl;
-        std::cout << "===    3. 로그아웃   ===" << std::endl;
+        std::cout << "===    1. 내 정보    ===" << std::endl;
+        std::cout << "===    2. 인벤토리   ===" << std::endl;
+        std::cout << "===   3. 레이드 매칭 ===" << std::endl;
+        std::cout << "===    4. 로그아웃   ===" << std::endl;
         std::cout << "========================" << std::endl;
 
         std::cin >> select;
@@ -97,9 +38,23 @@ int main() {
         switch (select) {
 
         case 1 :{
-            
-            break;
-        }
+                int checknum;
+                std::cout << "원하는 인벤토리 번호 누르고 엔터를 눌러주세요." << std::endl;
+                std::cout << "1. 장비 " << "2. 소비 " << "3. 재료 " << "4. 뒤로가기" << std::endl;
+                std::cin >> checknum;
+                
+                if (checknum == 1) {
+
+                }
+                else if (checknum == 2) {
+
+                }
+                else if (checknum == 3) {
+
+                }
+
+                else break;
+            }
         
         case 2:
         {
@@ -130,6 +85,7 @@ int main() {
                 
                 SOCKET udpSocket = socket(AF_INET, SOCK_DGRAM, 0);
                 HANDLE iocp = CreateIoCompletionPort((HANDLE)udpSocket, NULL, (ULONG_PTR)userSkt, 0);
+
                 sockaddr_in serverAddr;
                 serverAddr.sin_family = AF_INET;
                 serverAddr.sin_port = htons(udpPort);
